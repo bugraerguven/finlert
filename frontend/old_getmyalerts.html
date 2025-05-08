@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Alerts Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">My Alerts Dashboard</h1>
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white shadow rounded-lg">
+        <thead>
+          <tr class="bg-gray-200 text-gray-700 text-left text-sm font-semibold">
+            <th class="py-3 px-4">Product ID</th>
+            <th class="py-3 px-4">Created At</th>
+            <th class="py-3 px-4">Type</th>
+            <th class="py-3 px-4">Interval</th>
+            <th class="py-3 px-4">Target Value</th>
+            <th class="py-3 px-4">Check Status</th>
+            <th class="py-3 px-4">Check Date</th>
+          </tr>
+        </thead>
+        <tbody id="alerts-body" class="text-sm text-gray-700">
+          <!-- Alerts will be injected here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Function to format date to "DD-MM-YYYY hh:mm:ss"
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      });
+    }
+
+    async function loadAlerts() {
+      try {
+        const response = await fetch('http://localhost:3001/getmyalerts', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'userid': '1',
+            'token': 'root'
+          }
+        });
+
+        const alerts = await response.json();
+
+        const tbody = document.getElementById('alerts-body');
+        tbody.innerHTML = '';
+
+        alerts.forEach(alert => {
+          const row = document.createElement('tr');
+          row.className = "border-b hover:bg-gray-100";
+
+          // Format the created_at and checkdate
+          const formattedCreatedAt = formatDate(alert.alert.created_at);
+          const formattedCheckDate = alert.price_alert_details[0].checklog?.checkdate 
+            ? formatDate(alert.price_alert_details[0].checklog.checkdate)
+            : '—';
+
+          row.innerHTML = `
+            <td class="py-2 px-4">${alert.alert.productid}</td>
+            <td class="py-2 px-4">${formattedCreatedAt}</td>
+            <td class="py-2 px-4">${alert.price_alert_details[0].detail.type}</td>
+            <td class="py-2 px-4">${alert.price_alert_details[0].detail.interval}</td>
+            <td class="py-2 px-4">${alert.price_alert_details[0].detail.target_value}</td>
+            <td class="py-2 px-4">${alert.price_alert_details[0].checklog.status}</td>
+            <td class="py-2 px-4">${formattedCheckDate}</td>
+          `;
+
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Failed to fetch alerts:', error);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadAlerts);
+  </script>
+</body>
+</html>
+ 

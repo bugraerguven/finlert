@@ -1,0 +1,34 @@
+Server is running on port 3010
+241.298357091
+Step size for CAKEUSDT: 0.01000000
+Allowed quantity precision: 2
+dbye bağlandı
+DEBUG HIT HERE
+{
+  asset: 'CAKE',
+  free: '117.93',
+  locked: '40.48',
+  borrowed: '0',
+  interest: '0',
+  netAsset: '158.41'
+}
+coinAsset -->  158.41
+ytopf -->  number
+Server is running on port 3010
+217.039730966
+Step size for KAVAUSDT: 0.10000000
+Allowed quantity precision: 1
+dbye bağlandı
+DEBUG HIT HERE
+{
+  asset: 'KAVA',
+  free: '167.7',
+  locked: '0',
+  borrowed: '0',
+  interest: '0',
+  netAsset: '167.7'
+}
+coinAsset -->  167.7
+ytopf -->  number
+dbye bağlandı
+LimitOrder oluşturuldu

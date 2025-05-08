@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add New Product</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h1 class="text-3xl font-bold mb-6">Add New Product</h1>
+
+    <form id="productForm">
+      <!-- Market -->
+      <div class="mb-4">
+        <label for="market" class="block text-sm font-medium text-gray-700">Market</label>
+        <input type="text" id="market" placeholder="crypto" name="market" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required />
+      </div>
+
+      <!-- Symbol -->
+      <div class="mb-4">
+        <label for="symbol" class="block text-sm font-medium text-gray-700">Symbol</label>
+        <input type="text" id="symbol" placeholder="BTCUSDT" name="symbol" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required />
+      </div>
+
+      <!-- Provider -->
+      <div class="mb-4">
+        <label for="provider" class="block text-sm font-medium text-gray-700">Provider</label>
+        <input type="text" id="provider" placeholder="binance" name="provider" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required />
+      </div>
+
+      <!-- Description -->
+      <div class="mb-4">
+        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea id="description" name="description" placeholder="crypto" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex justify-end">
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">Add Product</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('productForm').addEventListener('submit', async function(event) {
+      event.preventDefault(); // Prevent form from submitting the traditional way
+
+      const market = document.getElementById('market').value;
+      const symbol = document.getElementById('symbol').value;
+      const provider = document.getElementById('provider').value;
+      const description = document.getElementById('description').value;
+
+      const productData = {
+        market: market,
+        symbol: symbol,
+        provider: provider,
+        description: description
+      };
+
+      try {
+        const response = await fetch('http://localhost:3002/adminCreateProduct', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'userid': 'admin',
+            'token': 'pasAdmin123!'
+          },
+          body: JSON.stringify(productData)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert('Product added successfully!');
+          // Optionally reset the form after successful submission
+          document.getElementById('productForm').reset();
+        } else {
+          alert('Failed to add product: ' + result.message);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error adding product!');
+      }
+    });
+  </script>
+
+</body>
+</html>

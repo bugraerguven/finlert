@@ -1,0 +1,85 @@
+const express = require('express');
+const router = express.Router();
+const runQuery = require('../utils/query');
+const getSymbolPrice = require('../../../MarketOperations/binance/walletoperations/getSymbolPrice.js');
+router.get('/', async (req, res) => {
+  const { userid } = req.headers;
+
+  try {
+    const alerts = await runQuery(
+      'SELECT * FROM alerts WHERE userid = ? AND status = ?',
+      [userid, 'active']
+    );
+
+
+
+    const results = await Promise.all(
+      alerts.map(async (alert) => {
+        const details = await runQuery(
+          'SELECT * FROM price_alert_details WHERE alertid = ?',
+          [alert.alertid]
+        );
+
+        const product = await runQuery(
+          'SELECT * FROM productlist WHERE productid = ?',
+          [alert.productid]
+        );
+
+        alert.productid=product[0];
+
+        const detailResults = await Promise.all(
+          details.map(async (detail) => {
+            
+            const checklogs = await runQuery(
+              'SELECT * FROM checklogs WHERE alertdetailid = ? ORDER BY checkdate DESC LIMIT 1',
+              [detail.id]
+            );
+
+            if (!checklogs[0]) {
+              alert.color="grey"
+              // If detail is null, return an empty array
+              return {
+                detail,
+                checklog: []
+              };
+            }
+
+            console.log("checklogs[0].status--> ",checklogs[0].status);
+            if (detail.type=="TARGET_UPPER" && checklogs[0].status=="ABOVE") { alert.color="red" }
+            else if (detail.type=="TARGET_LOWER" && checklogs[0].status=="BELOW") { alert.color="red" }
+            else if (detail.type=="TARGET_CANAL_INSIDE" && checklogs[0].status=="INSIDE") { alert.color="red" }
+            else if (detail.type=="TARGET_CANAL_OUTSIDE" && checklogs[0].status=="OUTSIDE") { alert.color="red" }
+            else {alert.color="green"}
+            const price = await getSymbolPrice(alert.productid.symbol);
+            //detail.distance = price;
+		console.log( detail.target_value - price )/detail.target_value ;
+            dist = (price - detail.target_value ) / price;
+		  const percent = `${(dist * 100).toFixed(1).replace('.', ',')}`; // "−6,5"
+const result = `%${percent}`; // "%-6,5"
+
+		  detail.distance=result;
+            
+             return {
+              detail,
+              checklog: checklogs[0] || null
+            };
+
+          })
+        );
+
+        return {
+          alert,
+          price_alert_details: detailResults
+        };
+      })
+    );
+
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching alerts:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+module.exports = router;
+ 

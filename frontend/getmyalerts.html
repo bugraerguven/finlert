@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Alerts Dashboard</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+ <!-- Sidebar -->
+ <button id="sidebar-toggle" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 fixed top-4 left-4 z-50">
+  Toggle Menu
+</button>
+
+<!-- Sidebar -->
+<div id="sidebar" class="w-64 bg-gray-800 text-white p-6 h-full fixed top-0 left-0 transform -translate-x-full transition-transform duration-300 ease-in-out">
+  <h2 class="text-2xl font-bold mb-6">-</h2>
+  <h2 class="text-2xl font-bold mb-6">Admin Panel</h2>
+  <ul>
+    <li class="mb-4">
+      <a href="file:///Users/bugraerguven/Documents/JotFormPersonelDocs/finlert/frontend/createNewProduct.html" class="hover:text-blue-300"> - Add New Symbol</a>
+    </li>
+  </ul>
+  <br>
+  
+  <h2 class="text-2xl font-bold mb-6">User Panel</h2>
+    <ul>
+    <li class="mb-4">
+      <a href="file:///Users/bugraerguven/Documents/JotFormPersonelDocs/finlert/frontend/createNewProduct.html" class="hover:text-blue-300 "> - My notifications</a>
+    </li>
+  </ul>
+</div>
+<!-- END Sidebar -->>
+  
+  <div class="max-w-7xl mx-auto">
+
+    <h1 class="text-3xl font-bold mb-6">My Alerts Dashboard</h1>
+
+    
+    <!-- Add New Alert Button -->
+<div class="w-full text-right">
+  <button 
+    onclick="toggleAddModal()" 
+    class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+    Add New Alert
+  </button>
+</div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white shadow rounded-lg">
+        <thead>
+          <tr class="bg-gray-200 text-gray-700 text-left text-sm font-semibold">
+            <th class="py-3 px-4">Title</th>
+            <th class="py-3 px-4">Product ID</th>
+            <th class="py-3 px-4">Created At</th>
+            <th class="py-3 px-4">Type</th>
+            <th class="py-3 px-4">Interval</th>
+            <th class="py-3 px-4">Target Value</th>
+            <th class="py-3 px-4">Target Lower</th>
+            <th class="py-3 px-4">Target Upper</th>
+            <th class="py-3 px-4">Check Status</th>
+            <th class="py-3 px-4">Check Date</th>
+            <th class="py-3 px-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="alerts-body" class="text-sm text-gray-700">
+          <!-- Alerts will be injected here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="bg-gray-100 p-8 hidden" id="editmodal">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-3xl font-bold mb-6">My Dashboard with Always Visible Modal</h1>
+
+      <!-- The always visible modal -->
+      <div class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full max-h-[90vh] overflow-y-auto">
+          <h2 class="text-2xl font-semibold mb-4">Edit Alert</h2>
+          <form id="editAlertForm">
+
+            <div class="mb-4" id="edittitle-container">
+              <label for="edittitle" class="block text-sm font-medium text-gray-700">Title</label>
+              <input  id="edittitle" name="edittitle"   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+            </div>
+
+            <input type="hidden" step="any" id="edit_alertid" name="edit_alertid" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+            <input type="hidden" step="any" id="edit_detailid" name="edit_detailid" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+
+            <div class="mb-4">
+              <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
+              <select id="type" name="type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required onchange="toggleFields()">
+                <option value="TARGET_UPPER">TARGET_UPPER</option>
+                <option value="TARGET_LOWER">TARGET_LOWER</option>
+                <option value="TARGET_HIT">TARGET_HIT  ( coming soon ) </option>
+                <option value="TARGET_CANAL_INSIDE">TARGET_CANAL_INSIDE </option>
+                <option value="TARGET_CANAL_OUTSIDE">TARGET_CANAL_OUTSIDE </option>
+                <option value="TARGET_TREND_INSIDE">TARGET_TREND_INSIDE ( coming soon ) </option>
+                <option value="TARGET_TREND_OUTSIDE">TARGET_TREND_OUTSIDE ( coming soon )</option>
+              </select>
+            </div>
+            <div class="mb-4" id="interval-container">
+              <label for="interval" class="block text-sm font-medium text-gray-700">Interval</label>
+              <select id="interval" name="interval" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                <option value="1m">1m</option>
+                <option value="15m">15m</option>
+                <option value="30m">30m</option>
+                <option value="1h">1h</option>
+                <option value="4h">4h</option>
+                <option value="12h">12h</option>
+                <option value="1d">1d</option>
+                <option value="3d">3d</option>
+                <option value="5d">5d</option>
+                <option value="1w">1w</option>
+                <option value="1mo">1mo</option>
+              </select>
+            </div>
+            <div class="mb-4" id="target_value-container">
+              <label for="target_value" class="block text-sm font-medium text-gray-700">Target Value</label>
+              <input type="number" step="any" id="target_value" value="0"  name="target_value" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+            </div>
+            <div class="mb-4" id="lower_value-container">
+              <label for="lower_value" class="block text-sm font-medium text-gray-700">Lower Value</label>
+              <input type="number" id="lower_value" name="lower_value" value="0" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+            </div>
+            <div class="mb-4" id="upper_value-container">
+              <label for="upper_value" class="block text-sm font-medium text-gray-700">Upper Value</label>
+              <input type="number" id="upper_value" name="upper_value" value="0"  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+            </div>
+            <div class="flex justify-end">
+              <button type="button" onclick="toggleModal()" class="text-gray-500 hover:text-gray-700 mr-4">Cancel1</button>
+              <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- Add New Alert Modal -->
+   <div class="bg-gray-100 p-8 hidden" id="addmodal">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-3xl font-bold mb-6" >Add New Alert</h1>
+
+      <!-- The add alert modal -->
+      <div class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full max-h-[90vh] overflow-y-auto">
+          <h2 class="text-2xl font-semibold mb-4">New Alert</h2>
+          <form>
+            <div class="mb-4">
+              <label for="productid" class="block text-sm font-medium text-gray-700">productid</label>
+              <select id="productid" name="productid" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                <!-- Options will be populated dynamically -->
+              </select>
+            </div>
+            
+            <div class="mb-4" id="title-container-add">
+              <label for="title-add" class="block text-sm font-medium text-gray-700">Description</label>
+              <input type="string" id="title-add" name="title-add" value="" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+            </div>
+            <div class="mb-4">
+              <label for="type" class="block text-sm font-medium text-gray-700">Type</label>
+              <select id="type-add" name="type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" >
+                <option value="TARGET_UPPER">TARGET_UPPER</option>
+                <option value="TARGET_LOWER">TARGET_LOWER</option>
+                <option value="TARGET_HIT">TARGET_HIT ( coming soon ) </option>
+                <option value="TARGET_CANAL_INSIDE">TARGET_CANAL_INSIDE </option>
+                <option value="TARGET_CANAL_OUTSIDE">TARGET_CANAL_OUTSIDE </option>
+                <option value="TARGET_TREND_INSIDE">TARGET_TREND_INSIDE ( coming soon )</option>
+                <option value="TARGET_TREND_OUTSIDE">TARGET_TREND_OUTSIDE ( coming soon )</option>
+              </select>
+            </div>
+            <div class="mb-4 hidden">
+              <label for="validated_until" class="block text-sm font-medium text-gray-700">Validated Until</label>
+              <input
+                type="date"
+                id="validated_until"
+                name="validated_until"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                required
+                value="2027-04-29" />
+            </div>
+            
+            <div class="mb-4">
+              <label for="waitforcandleclose" class="flex items-center text-sm font-medium text-gray-700">
+                <input type="checkbox" id="waitforcandleclose" name="waitforcandleclose" class="mr-2" checked onchange="checkAlert(this)" />
+                Wait for Candle Close
+                
+              </label>
+              <p class="text-xs">Checks after each candle close</p>
+              <p class="text-xs">To alert whenever price hit the value, uncheck the box</p>
+            </div>
+            <div class="mb-4">
+              <label for="interval-add" class="block text-sm font-medium text-gray-700">Interval</label>
+              <select id="interval-add" name="interval-add" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                <option value="1m">1m</option>
+                <option value="15m">15m</option>
+                <option value="30m">30m</option>
+                <option value="1h" selected>1h</option>
+                <option value="4h">4h</option>
+                <option value="12h">12h</option>
+                <option value="1d">1d</option>
+                <option value="3d">3d</option>
+                <option value="5d">5d</option>
+                <option value="1w">1w</option>
+                <option value="1mo">1mo</option>
+              </select>
+            </div>
+            <div class="mb-4" id="target_value-container-add">
+              <label for="target_value-add" class="block text-sm font-medium text-gray-700">Target Value</label>
+              <input type="number" id="target_value-add" name="target_value-add" value="0" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" step="any"/>
+            </div>
+            <div class="mb-4" id="lower_value-container-add">
+              <label for="lower_value-add" class="block text-sm font-medium text-gray-700">Lower Value</label>
+              <input type="number" id="lower_value-add" name="lower_value-add" value="0" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+            </div>
+            <div class="mb-4" id="upper_value-container-add">
+              <label for="upper_value-add" class="block text-sm font-medium text-gray-700">Upper Value</label>
+              <input type="number" id="upper_value-add" name="upper_value-add" value="0" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" />
+            </div>
+            <div class="flex justify-end">
+              <button type="button" onclick="toggleAddModal()" class="text-gray-500 hover:text-gray-700 mr-4">Cancel</button>
+              <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+  <script>
+    // Function to format date to "DD-MM-YYYY hh:mm:ss"
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      });
+    }
+
+    function checkAlert(checkbox) {
+    if (!checkbox.checked) {
+      alert("To activate stream monitoring premium membership is required.");
+      checkbox.checked = true; // Recheck the checkbox
+    }
+  }
+
+
+    async function deletealert(alert) {
+      let alertId=alert.alert.alertid;
+  const url = `http://35.234.96.197:3001/deleteAlert/${alertId}`;
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    'userid': '1',
+    'token': 'root',
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: headers,
+    });
+
+    if (response.ok) {
+      console.log('Alert deleted successfully!');
+      // Handle response if necessary
+      const data = await response.json();
+      console.log(data); // You can log the response data for further use
+      window.location.reload();
+    } else {
+      console.error('Failed to delete alert', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error sending request:', error);
+  }
+}
+
+
+    function toggleModal(alert) {
+      console.log("alert --> ");
+      console.log(alert);
+      const modal = document.getElementById('editmodal');
+      modal.classList.toggle('hidden'); // Toggle the 'hidden' class to show/hide the modal
+
+      // Populate the modal fields with the alert's details edittitle
+      document.getElementById('edit_alertid').value = alert.alert.alertid;
+      document.getElementById('edittitle').value = alert.alert.title;
+      document.getElementById('edit_detailid').value = alert.price_alert_details[0].checklog.alertdetailid;
+      document.getElementById('type').value = alert.price_alert_details[0].detail.type;
+      document.getElementById('interval').value = alert.price_alert_details[0].detail.interval;
+      document.getElementById('target_value').value = alert.price_alert_details[0].detail.target_value;
+      document.getElementById('lower_value').value = alert.price_alert_details[0].detail.lower_value;
+      document.getElementById('upper_value').value = alert.price_alert_details[0].detail.upper_value;
+      
+      // Call toggleFields to update visibility based on alert type
+      toggleFields();
+    }
+
+    function toggleAddModal() {
+      fetchProducts();
+  const modal = document.getElementById('addmodal');
+  modal.classList.toggle('hidden');
+}
+
+    // Function to toggle form fields visibility based on selected type
+    function toggleFields() {
+      const type = document.getElementById('type').value;
+      const targetValueContainer = document.getElementById('target_value-container');
+      const lowerValueContainer = document.getElementById('lower_value-container');
+      const upperValueContainer = document.getElementById('upper_value-container');
+
+      // Reset visibility for all fields
+      targetValueContainer.style.display = 'block';
+      lowerValueContainer.style.display = 'block';
+      upperValueContainer.style.display = 'block';
+
+      if (type === 'TARGET_HIT' || type === 'TARGET_UPPER' || type === 'TARGET_LOWER') {
+        // Hide lower and upper value fields
+        lowerValueContainer.style.display = 'none';
+        upperValueContainer.style.display = 'none';
+      } else if (type === 'TARGET_CANAL_INSIDE' || type === 'TARGET_CANAL_OUTSIDE') {
+        // Hide target value field
+        targetValueContainer.style.display = 'none';
+      } else if (type === 'TARGET_TREND_INSIDE' || type === 'TARGET_TREND_OUTSIDE') {
+        // Hide target value, lower value, and upper value fields
+        targetValueContainer.style.display = 'none';
+        lowerValueContainer.style.display = 'none';
+        upperValueContainer.style.display = 'none';
+      }
+    }
+
+    async function loadAlerts() {
+      try {
+        const response = await fetch('http://35.234.96.197:3001/getmyalerts', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'userid': '1',
+            'token': 'root'
+          }
+        });
+
+        const alerts = await response.json();
+        console.log(alerts);
+
+        const tbody = document.getElementById('alerts-body');
+        tbody.innerHTML = '';
+
+        alerts.forEach(alert => {
+          const row = document.createElement('tr');
+          row.className = "border-b hover:bg-gray-100";
+
+          // Apply background color from alert's 'color' property
+          const rowColor = alert.alert.color || '#FFFFFF'; // Default to white if no color provided
+          row.style.backgroundColor = rowColor;
+
+          // Format the created_at and checkdate
+          const formattedCreatedAt = formatDate(alert.alert.created_at);
+          const formattedCheckDate = alert.price_alert_details[0].checklog?.checkdate 
+            ? formatDate(alert.price_alert_details[0].checklog.checkdate)
+            : '—';
+
+          row.innerHTML = `
+	    <span>Hİ</span>
+            <td class="py-2 px-4">${alert.alert.title}</td>
+            <td class="py-2 px-4"><p> <a href="https://tr.tradingview.com/chart?symbol=BINANCE%3A${alert.alert.productid.symbol}" target="_blank">${alert.alert.productid.symbol}</a>.</p>
+</td>
+            <td class="py-2 px-4">${formattedCreatedAt}</td>
+            <td class="py-2 px-4">${alert.price_alert_details[0].detail.type}</td>
+            <td class="py-2 px-4">${alert.price_alert_details[0].detail.interval}</td>
+            <td class="py-2 px-4">${alert.price_alert_details[0].detail.target_value}</td>
+            <td class="py-2 px-4">${alert.price_alert_details[0].detail.lower_value}</td>
+            <td class="py-2 px-4">${alert.price_alert_details[0].detail.upper_value}</td>
+            <td class="py-2 px-4">${alert.price_alert_details[0].checklog.status}</td>
+            <td class="py-2 px-4">${formattedCheckDate}</td>
+            <td class="py-2 px-4 text-center">
+              <button class="text-blue-500 hover:text-blue-700 " 
+                      onclick="toggleModal(${JSON.stringify(alert).replace(/"/g, '&quot;')})">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                  <path d="M12.146 1.854a1 1 0 0 1 0 1.414L7.707 8l-1.5 4.5L8 9.707l5.854-5.853a1 1 0 0 1 1.415 1.415zM13 0a2 2 0 0 1 1.414.586l2 2a2 2 0 0 1 0 2.828l-12 12a2 2 0 0 1-2.828 0l-2-2a2 2 0 0 1 0-2.828L4.707 11 2.5 14.5 6 9.707 13 2.707l1.5-1.5A2 2 0 0 1 13 0z"/>
+                </svg>
+              </button>
+              <button class="text-red-500 hover:text-blue-700 " 
+                  onclick="deletealert(${JSON.stringify(alert).replace(/"/g, '&quot;')})">  
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash  ml-1" viewBox="0 0 16 16"> <path d="M5.5 0a.5.5 0 0 1 .5.5V1h5V.5a.5.5 0 0 1 1 0V1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h1V.5a.5.5 0 0 1 .5-.5h3zM4 3v11a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V3H4z"/> </svg>
+              </button>
+
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Failed to fetch alerts:', error);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadAlerts);
+
+    function handleTypeChange(selectElement) {
+    const type = selectElement.value;
+
+    const targetValue = document.getElementById("target_value-container-add");
+    const lowerValue = document.getElementById("lower_value-container-add");
+    const upperValue = document.getElementById("upper_value-container-add");
+
+    // Show all by default
+    targetValue.style.display = "block";
+    lowerValue.style.display = "block";
+    upperValue.style.display = "block";
+
+    // Hide based on selected type
+    if (type === "TARGET_HIT" || type === "TARGET_UPPER" || type === "TARGET_LOWER") {
+      lowerValue.style.display = "none";
+      upperValue.style.display = "none";
+    }
+
+    if (type === "TARGET_CANAL_INSIDE" || type === "TARGET_CANAL_OUTSIDE") {
+      targetValue.style.display = "none";
+    }
+
+    if (type === "TARGET_TREND_INSIDE" || type === "TARGET_TREND_OUTSIDE") {
+      targetValue.style.display = "none";
+      lowerValue.style.display = "none";
+      upperValue.style.display = "none";
+    }
+  }
+
+  // Trigger on page load for default value
+  window.addEventListener("DOMContentLoaded", () => {
+    const typeSelect = document.getElementById("type-add");
+    handleTypeChange(typeSelect);
+    typeSelect.addEventListener("change", () => handleTypeChange(typeSelect));
+  });
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.querySelector("#addmodal form");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const body = {
+        userid: 1,
+        productid: parseInt(document.getElementById("productid").value),
+        title: document.getElementById("title-add").value,
+        type: document.getElementById("type-add").value,
+        validated_until: document.getElementById("validated_until").value,
+        status: "active",
+        waitforcandleclose: document.getElementById("waitforcandleclose").checked,
+        interval: document.getElementById("interval-add").value,
+        target_value: parseFloat(document.getElementById("target_value-add").value) || null,
+        lower_value: parseFloat(document.getElementById("lower_value-add").value) || null,
+        upper_value: parseFloat(document.getElementById("upper_value-add").value) || null,
+      };
+
+      // Remove null values if the inputs are hidden
+      const type = body.type;
+      if (["TARGET_HIT", "TARGET_UPPER", "TARGET_LOWER"].includes(type)) {
+        body.lower_value = null;
+        body.upper_value = null;
+      }
+      if (["TARGET_CANAL_INSIDE", "TARGET_CANAL_OUTSIDE"].includes(type)) {
+        body.target_value = null;
+      }
+      if (["TARGET_TREND_INSIDE", "TARGET_TREND_OUTSIDE"].includes(type)) {
+        body.target_value = null;
+        body.lower_value = null;
+        body.upper_value = null;
+      }
+console.log("BODY --> ");
+console.log(body);
+      try {
+        const res = await fetch("http://35.234.96.197:3001/createpricealert", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "userid": "1",
+            "token": "root"
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+          const error = await res.text();
+          throw new Error(`Server error: ${res.status} - ${error}`);
+        }
+
+        const data = await res.json();
+        alert("Alert created successfully!");
+        toggleAddModal(); // assuming you have this function to close modal
+        form.reset();
+        window.location.reload();
+
+      } catch (err) {
+        console.error("Failed to create alert:", err);
+        alert("Error creating alert. Check console for details.");
+      }
+    });
+  });
+
+  async function fetchProducts() {
+    try {
+      const response = await fetch('http://35.234.96.197:3001/getproductlist', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'userid': '1',
+            'token': 'root'
+          }
+        });
+      const products = await response.json();
+      console.log(products);
+
+      const selectElement = document.getElementById('productid');
+      selectElement.innerHTML = ''; // Clear any existing options
+
+      // Iterate over the products and create options
+      products.forEach(product => {
+        const option = document.createElement('option');
+        option.value = product.productid;  // Set value to productid
+        option.textContent = product.symbol + ' ('  + product.description + ' )';  // Set display text to symbol
+        selectElement.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error fetching product list:', error);
+    }
+  }
+
+    // Function to toggle sidebar visibility
+    const sidebarToggleButton = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+
+    sidebarToggleButton.addEventListener('click', () => {
+      // Toggle the 'translate-x-full' class to show or hide the sidebar
+      sidebar.classList.toggle('-translate-x-full');
+    });
+
+
+  document.getElementById('editAlertForm').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Formun normal submit işlemini engelle
+
+    // Formdan verileri al
+    const data = {
+      alertid: document.getElementById('edit_alertid').value,
+      detailid: document.getElementById('edit_detailid').value,
+      title: document.getElementById('edittitle').value,
+      type: document.getElementById('type').value,
+      interval: document.getElementById('interval').value,
+      target_value: parseFloat(document.getElementById('target_value').value),
+      lower_value: parseFloat(document.getElementById('lower_value').value),
+      upper_value: parseFloat(document.getElementById('upper_value').value),
+    };
+
+    console.log("data --> ");
+    console.log(data);
+
+    // Header'lar
+    const headers = {
+      'Content-Type': 'application/json',
+      'userid': '1',
+      'token': 'root',
+    };
+
+    try {
+      // POST isteği gönder
+      const response = await fetch('http://35.234.96.197:3001/editmyalert', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      console.log('Success:', result);
+
+      // Başarılıysa modalı kapatabiliriz
+      toggleModal();
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+
+ document.getElementById('productid').addEventListener('change', function() {
+    const newValue = this.value;  // et the selected value from the <select> element
+    // Send the request to the specified URL
+    fetch('http://35.234.96.197:3010/getSymbolPrice', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: newValue })  // Send selected pairname as JSON body
+    })
+    .then(response => response.json())  // Assuming the response is JSON
+    .then(data => {
+	    console.log(data.response);
+        // Update the value of the input field with the response data
+        // Assuming the price is available in data.price or similar
+        document.getElementById('target_value-add').value = data.response || 0;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+
+</script>
+
+</body>
+</html>

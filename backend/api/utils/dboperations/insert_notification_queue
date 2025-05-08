@@ -1,0 +1,17 @@
+const runQuery = require('../query'); // Adjust path if needed
+
+async function insertNotificationQueue(notificationid,userid,method, alertdetailid, status) {
+  try {
+    const query = `
+      INSERT INTO notifications_queue (notificationid,userid,method, alertdetailid, status)
+      VALUES (?, ?, ?, ?, ? )
+    `;
+    const result = await runQuery(query, [notificationid, userid, method, alertdetailid, status]);
+    return result.insertId; // Return the inserted ID if needed
+  } catch (err) {
+    console.error('Error inserting into notifications_queue:', err);
+    throw err;
+  }
+}
+
+module.exports = insertNotificationQueue;
